@@ -43,8 +43,7 @@ jobs:
       - name: Install Python Dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install -r Tools/Firmware_extractor/tools/extract_android_ota_payload/requirements.txt
-          python3 -m pip install backports.lzma bsdiff4 twrpdtgen extract-dtb pycryptodome
+          python3 -m pip install protobuf==3.20.3 backports.lzma bsdiff4 twrpdtgen extract-dtb pycryptodome
 
       - name: Prepare and Clean URL
         id: prep
