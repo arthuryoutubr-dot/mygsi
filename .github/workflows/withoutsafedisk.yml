@@ -79,29 +79,12 @@ jobs:
         run: |
           chmod +x LinkToGSI.sh
           bash LinkToGSI.sh "$(pwd)/firmware.zip" "${{ inputs.rom_type }}"
-          
-      - name: Compress GSI (with Fallback)
-        run: |
-          cd Output || exit 1
-          
-          # 1. Take ownership from root (Fixes Permission Denied)
-          sudo chown -R $USER:$USER .
-          
-          echo "Attempting compression..."
-          
-          # 2. Compress with xz -4 (Safe for RAM)
-          # '|| true' ensures the workflow doesn't stop if compression fails
-          
-          #zstd -15 --long=27 --threads=0 *.img || true
-          xz -4 -T0 -v *.img || true
-          echo "Compression step done. Checking files..."
-          ls -lh
 
       - name: Upload to GoFile
         env:
           GOFILE_API_KEY: ${{ secrets.GOFILE_API_KEY }}
         run: |
-          FILE=$(ls Output/*.img* | head -n 1)
+          FILE=$(ls Output/*.zip* | head -n 1)
           bash uploadgofile.sh "$FILE"
         
           
