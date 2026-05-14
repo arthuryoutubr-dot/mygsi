@@ -1,0 +1,84 @@
+name: Link to GSI Generator without safedisk
+
+on:
+  workflow_dispatch:
+    inputs:
+      firmware_link:
+        description: 'Stock Firmware Link (Direct Download/Wget)'
+        required: true
+      rom_type:
+        description: 'ROM Type'
+        required: true
+        type: choice
+        options:
+          - OneUI
+          - Pixel
+          - MIUIGeneric
+          - HyperOS
+          - HMD
+
+jobs:
+  Link2GSI:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: false # We handle this manually
+
+      - name: Fix Broken Submodule (Manual Clone)
+        run: |
+          rm -rf Tools/Firmware_extractor
+          git clone --recurse-submodules https://github.com/erfanoabdi/Firmware_extractor.git Tools/Firmware_extractor
+          rm -rf Tools/Firmware_extractor/tools/extract_android_ota_payload
+          git clone https://github.com/swany88/extract_android_ota_payload.git Tools/Firmware_extractor/tools/extract_android_ota_payload
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack arj cabextract rename liblzma-dev python3-pip brotli lz4 protobuf-compiler git gawk
+          
+      - name: Install Python Dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install protobuf==3.20.3 backports.lzma bsdiff4 twrpdtgen extract-dtb pycryptodome
+
+      - name: Prepare and Clean URL
+        id: prep
+        run: |
+          LINK="${{ inputs.firmware_link }}"
+          if [[ "$LINK" == *"google.com/url"* ]]; then
+             LINK=$(echo "$LINK" | grep -oP 'q=\K[^&]*' | python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.stdin.read().strip()))")
+          fi
+          echo "url=$LINK" >> $GITHUB_OUTPUT
+
+      - name: Download Firmware
+        id: download
+        run: |
+          wget -q -O firmware.zip "${{ steps.prep.outputs.url }}"
+          if [ -f firmware.zip ]; then
+            echo "Download Successful."
+            du -h firmware.zip
+          else
+            echo "Download Failed."
+            exit 1
+          fi
+      - name: Make all scripts executable
+        run: |
+          find . -type f -name "*.sh" -exec chmod +x {} \;
+          
+      - name: Run LinkToGSI Script
+        run: |
+          chmod +x LinkToGSI.sh
+          sudo bash LinkToGSI.sh "$(pwd)/firmware.zip" "${{ inputs.rom_type }}"
+
+      - name: Upload to GoFile
+        env:
+          GOFILE_API_KEY: ${{ secrets.GOFILE_API_KEY }}
+        run: |
+          FILE=$(ls Output/*.img* | head -n 1)
+          bash uploadgofile.sh "$FILE"
+        
+          
