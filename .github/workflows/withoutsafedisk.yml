@@ -88,16 +88,28 @@ jobs:
 
 
 
-      - name: Upload to Draft Release
-        uses: softprops/action-gh-release@v2
-        if: always()
-        with:
-          tag_name: draft-${{ github.run_number }}
-          name: Draft Build #${{ github.run_number }}
-          draft: true
-          files: |
-            Output/*.img*
-            Output/*.txt
-            Output/*.log
+      - name: Create Draft Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: gsi-${{ github.run_number }}
+          release_name: "GSI Draft Build #${{ github.run_number }}"
+          body: |
+            Automated GSI build (testing / draft release)
+            ROM: ${{ inputs.rom_type }}
+          draft: true
+          prerelease: false
+
+      - name: Upload to GitHub Draft Release (fast uploader)
+        uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: "Output/*.img*;Output/*.txt;Output/*.log"
+          release_id: ${{ steps.create_release.outputs.id }}
+          overwrite: true
+          verbose: true
+        
+          
