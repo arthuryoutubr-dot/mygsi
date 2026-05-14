@@ -1,4 +1,4 @@
-name: Link to GSI Generator without compress
+name: Link to GSI Generator without safedisk
 
 on:
   workflow_dispatch:
@@ -73,6 +73,8 @@ jobs:
         run: |
           chmod +x LinkToGSI.sh
           sudo bash LinkToGSI.sh "$(pwd)/firmware.zip" "${{ inputs.rom_type }}"
+
+
 
       - name: Upload to GoFile
         env:
