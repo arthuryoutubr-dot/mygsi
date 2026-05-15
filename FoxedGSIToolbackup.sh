@@ -3,7 +3,11 @@
 INPUT_DIR=$1
 ROM_TYPE=$2
 BASE_DIR="Temp/system"
-
+# PRIVILEGE HELPER (ADD THIS)
+# =========================
+if [[ "$EUID" -ne 0 ]]; then
+    exec sudo bash "$0" "$@"
+fi
 usage() {
   echo "Usage: $0 [base_directory] [rom_type]"
   echo ""

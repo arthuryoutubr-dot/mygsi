@@ -99,3 +99,13 @@ done
 
 find "$BASE_DIR" -type f -name "fstab.*" -exec rm -f {} + 2>/dev/null
 find "$BASE_DIR" -type f -name "verity_key" -exec rm -f {} + 2>/dev/null
+
+SYSTEM_PROP="$BASE_DIR/system/build.prop"
+
+sed -i \
+'s/^ro.build.display.id=.*/ro.build.display.id=PortedByRofikKernel/' \
+"$SYSTEM_PROP"
+
+sed -i \
+'s/^ro.system.build.display.id=.*/ro.system.build.display.id=PortedByRofikKernel/' \
+"$SYSTEM_PROP"

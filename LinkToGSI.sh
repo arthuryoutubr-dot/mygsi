@@ -7,7 +7,7 @@ ROM_TYPE=$2
 # PRIVILEGE HELPER (ADD THIS)
 # =========================
 if [[ "$EUID" -ne 0 ]]; then
-    exec sudo -E bash "$0" "$@"
+    exec sudo bash "$0" "$@"
 fi
 
 partitions="vendor system system_ext product optics prism mi_ext my_bigball my_engineering my_manifest my_region my_carrier my_heytap my_product my_stock"
@@ -110,33 +110,36 @@ for partition in $partitions; do
     fi
 done
 
-# Internalize dynamic partitions into system
+# Internalize dynamic partitions into system/system
 for partition in product system_ext; do
 
-    # ROM uses symlink placeholder
-    if [ -L "UnpackedROMs/system/$partition" ]; then
+    TARGET="UnpackedROMs/system/system/$partition"
+
+    # Replace symlink placeholder
+    if [ -L "$TARGET" ]; then
 
         echo "Replacing symlinked $partition with real partition"
 
-        rm -f "UnpackedROMs/system/$partition"
+        rm -f "$TARGET"
 
         if [ -d "UnpackedROMs/$partition" ]; then
-            mv "UnpackedROMs/$partition" \
-               "UnpackedROMs/system/$partition"
+            mv "UnpackedROMs/$partition" "$TARGET"
         fi
 
-    # ROM has no embedded partition
-    elif [ ! -e "UnpackedROMs/system/$partition" ] && \
+    # Missing inside system/system
+    elif [ ! -e "$TARGET" ] && \
          [ -d "UnpackedROMs/$partition" ]; then
 
-        echo "Embedding standalone $partition into system"
+        echo "Embedding standalone $partition into system/system"
 
-        mv "UnpackedROMs/$partition" \
-           "UnpackedROMs/system/$partition"
+        mv "UnpackedROMs/$partition" "$TARGET"
+
     else
-        echo "$partition already embedded in system"
+        echo "$partition already embedded in system/system"
         rm -rf "UnpackedROMs/$partition"
     fi
 done
+echo "===== VERIFY ====="
+ls -l UnpackedROMs/system/system/
 
-sudo bash FoxetGSITool.sh "UnpackedROMs/system" "$ROM_TYPE"
+bash FoxetGSITool.sh "UnpackedROMs/system" "$ROM_TYPE"
