@@ -11,7 +11,7 @@ product="$BASE_DIR/product"
 sed -i "/dataservice_app/d" "$product/etc/selinux/product_seapp_contexts"
 
 [ -f "$system_ext/etc/selinux/system_ext_seapp_contexts" ] && \
-sed -i "/dataservice_app/d" $system_ext/etc/selinux/system_ext_seapp_contexts"
+sed -i "/dataservice_app/d" "$system_ext/etc/selinux/system_ext_seapp_contexts"
 
 # Delete Google apps
 rm -rf $BASE_DIR/system/app/datastatusnotification
