@@ -3,11 +3,25 @@
 SCRIPT_DIR=$(dirname "$0")
 BASE_DIR="$1"
 
-mkdir -p "$BASE_DIR/system/rofikkernel"
-mkdir -p "$BASE_DIR/system/rofikkernel/vo"
+SOURCE_VENDOR="UnpackedROMs/vendor"
+ROFIKKERNEL_DIR="$BASE_DIR/system/system/rofikkernel"
 
-cp -r "$BASE_DIR/vendor/overlay/." "$BASE_DIR/system/rofikkernel/vo/"
-cp "$BASE_DIR/vendor/etc/passwd" "$BASE_DIR/system/rofikkernel/passwd"
-cp "$BASE_DIR/vendor/etc/group" "$BASE_DIR/system/rofikkernel/group"
+mkdir -p "$ROFIKKERNEL_DIR"
 
-echo "" >> "$BASE_DIR/system/bin/rw-system.sh" && cat "$SCRIPT_DIR/rw-system-add.sh" >> "$BASE_DIR/system/bin/rw-system.sh"
+if [ -d "$SOURCE_VENDOR/overlay" ]; then
+    mkdir -p "$ROFIKKERNEL_DIR/vo"
+    cp -a "$SOURCE_VENDOR/overlay/." "$ROFIKKERNEL_DIR/vo/"
+fi
+
+if [ -f "$SOURCE_VENDOR/etc/passwd" ]; then
+    cp "$SOURCE_VENDOR/etc/passwd" \
+       "$ROFIKKERNEL_DIR/passwd"
+fi
+
+if [ -f "$SOURCE_VENDOR/etc/group" ]; then
+    cp "$SOURCE_VENDOR/etc/group" \
+       "$ROFIKKERNEL_DIR/group"
+fi
+
+cat "$SCRIPT_DIR/rw-system-add.sh" \
+>> "$BASE_DIR/system/bin/rw-system.sh"

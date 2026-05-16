@@ -21,7 +21,7 @@ chmod 0755 "$BASE_DIR/system/bin/rofikkernel-debug.sh"
     
 sed -i "/ro.secure/d" $BASE_DIR/system/build.prop
 sed -i "/ro.adb.secure/d" $BASE_DIR/system/build.prop
-sed -i "/ro.debuggable/d" $BASE_DIR/s ystem/build.prop
+sed -i "/ro.debuggable/d" $BASE_DIR/system/build.prop
 sed -i "/ro.force.debuggable/d" $BASE_DIR/system/build.prop
 sed -i "/media.settings.xml/d" $BASE_DIR/system/build.prop
 sed -i "/ro.arch/d" $BASE_DIR/system/build.prop

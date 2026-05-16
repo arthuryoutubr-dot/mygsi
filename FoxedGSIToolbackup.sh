@@ -3,11 +3,7 @@
 INPUT_DIR=$1
 ROM_TYPE=$2
 BASE_DIR="Temp/system"
-# PRIVILEGE HELPER (ADD THIS)
-# =========================
-if [[ "$EUID" -ne 0 ]]; then
-    exec sudo bash "$0" "$@"
-fi
+
 usage() {
   echo "Usage: $0 [base_directory] [rom_type]"
   echo ""
@@ -23,7 +19,7 @@ usage() {
 supported_roms() {
     echo "Available ROMs:"
     echo ""
-    declare -a versions=(12 12.1 13 14 15 17 16)
+    declare -a versions=(12 12.1 13 14 15)
     for version in "${versions[@]}"; do
         rom_dir="ROMsPatches/$version"
         if [ -d "$rom_dir" ]; then
@@ -77,9 +73,6 @@ case "$SDK_VERSION" in
   35)
     android_version="15"
     ;;
-  37)
-    android_version="17"
-    ;;  
   36)
     android_version="16"
     ;;

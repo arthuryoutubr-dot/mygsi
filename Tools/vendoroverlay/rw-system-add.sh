@@ -6,34 +6,48 @@ logi() {
     echo "$LOGTAG: $1" > /dev/kmsg
 }
 
+ROFIKKERNEL_DIR="/system/system/rofikkernel"
+
 logi "rw-system-add.sh started"
 
 # Verify source paths
-ls -l /system/rofikkernel > /dev/kmsg 2>&1
-ls -l /system/rofikkernel/vo > /dev/kmsg 2>&1
+ls -l "$ROFIKKERNEL_DIR" > /dev/kmsg 2>&1
+ls -l "$ROFIKKERNEL_DIR/vo" > /dev/kmsg 2>&1
 
 # Vendor overlay
-if mount -o bind /system/rofikkernel/vo /vendor/overlay; then
-    logi "overlay bind mounted"
+if [ -d "$ROFIKKERNEL_DIR/vo" ]; then
+    if mount -o bind "$ROFIKKERNEL_DIR/vo" /vendor/overlay; then
+        logi "overlay bind mounted"
+    else
+        logi "overlay bind FAILED"
+    fi
 else
-    logi "overlay bind FAILED"
+    logi "overlay source missing"
 fi
 
 # passwd
-if mount -o bind /system/rofikkernel/passwd /vendor/etc/passwd; then
-    logi "passwd bind mounted"
+if [ -f "$ROFIKKERNEL_DIR/passwd" ]; then
+    if mount -o bind "$ROFIKKERNEL_DIR/passwd" /vendor/etc/passwd; then
+        logi "passwd bind mounted"
+    else
+        logi "passwd bind FAILED"
+    fi
 else
-    logi "passwd bind FAILED"
+    logi "passwd source missing"
 fi
 
 # group
-if mount -o bind /system/rofikkernel/group /vendor/etc/group; then
-    logi "group bind mounted"
+if [ -f "$ROFIKKERNEL_DIR/group" ]; then
+    if mount -o bind "$ROFIKKERNEL_DIR/group" /vendor/etc/group; then
+        logi "group bind mounted"
+    else
+        logi "group bind FAILED"
+    fi
 else
-    logi "group bind FAILED"
+    logi "group source missing"
 fi
 
-# Final mount verify
+# Verify mounts
 mount | grep vendor > /dev/kmsg 2>&1
 
 logi "rw-system-add.sh finished"
