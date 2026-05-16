@@ -28,7 +28,7 @@ if [ -d "$SOURCE_VENDOR/overlay" ]; then
 
     echo "Overlay copied"
 
-    ls -l "$ROFIKKERNEL_DIR/vo" | head
+    #ls -l "$ROFIKKERNEL_DIR/vo" | head
 
 else
     echo "Vendor overlay NOT found"
