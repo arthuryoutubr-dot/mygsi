@@ -29,10 +29,6 @@ jobs:
           fetch-depth: 0
           submodules: false # We handle this manually
 
-      - name: Fix Broken Submodule (Manual Clone)
-        run: |
-          rm -rf Tools/Firmware_extractor
-          git clone --recurse-submodules https://github.com/erfanoabdi/Firmware_extractor.git Tools/Firmware_extractor
 
       - name: Fix Broken Submodule  2 (Manual Clone)
         run: |
