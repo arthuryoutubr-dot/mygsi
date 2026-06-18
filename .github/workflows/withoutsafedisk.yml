@@ -30,11 +30,6 @@ jobs:
           submodules: false # We handle this manually
 
 
-      - name: Fix Broken Submodule  2 (Manual Clone)
-        run: |
-          rm -rf Tools/Firmware_extractor/tools/extract_android_ota_payload
-          git clone https://github.com/swany88/extract_android_ota_payload.git Tools/Firmware_extractor/tools/extract_android_ota_payload
-
       - name: Install System Dependencies
         run: |
           sudo apt-get update
