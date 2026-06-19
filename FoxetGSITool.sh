@@ -48,7 +48,7 @@ fi
 rm -rf "$BASE_DIR"
 mkdir -p "$BASE_DIR"
 echo "Copying to temp directory"
-rsync -aHAX "$INPUT_DIR/" "$BASE_DIR/"
+cp -a "$INPUT_DIR/." "$BASE_DIR/"
 
 SDK_VERSION=$(grep -m1 "ro.build.version.sdk" "$BASE_DIR/system/build.prop" | cut -d '=' -f2 | tr -dc '0-9')
 
