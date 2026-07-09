@@ -11,12 +11,12 @@ on:
         required: true
         type: choice
         options:
-          - OneUI
+          - Generic
           - Pixel
           - MIUIGeneric
           - HyperOS
           - HMD
-          - Generic
+          - OneUI
 
 jobs:
   RofikKernelDev:
